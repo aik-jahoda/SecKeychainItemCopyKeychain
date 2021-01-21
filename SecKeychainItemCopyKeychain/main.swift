@@ -21,55 +21,7 @@ if status == OSStatus(errSecDuplicateKeychain) {
     print("Open Keychain finished with status: \(status) \(SecCopyErrorMessageString(status, nil) ?? "" as CFString)")
 }
 
-let keychainItem = [
-    kSecValueData: "Pullip2020".data(using: .utf8)!,
-    kSecAttrAccount: "andyibanez",
-    kSecAttrServer: "pullipstyle.com",
-    kSecClass: kSecClassInternetPassword,
-    kSecUseKeychain: keychain!,
-    kSecReturnAttributes: true
-] as CFDictionary
-
-var ref: AnyObject?
-
-let query = [
-    kSecClass: kSecClassInternetPassword,
-    kSecAttrServer: "pullipstyle.com",
-    kSecReturnAttributes: true,
-    kSecReturnData: true
-] as CFDictionary
-
 print("==============================================================")
-status = SecItemCopyMatching(query, &ref)
-print("SecItemCopyMatching finished with status: \(status) \(SecCopyErrorMessageString(status, nil) ?? "" as CFString)")
-
-if status != 0 || ref == nil {
-    print("==============================================================")
-    status = SecItemAdd(keychainItem, &ref)
-    print("Add Item finished with status: \(status) \(SecCopyErrorMessageString(status, nil) ?? "" as CFString)")
-}
-print("==============================================================")
-if ref != nil {
-    let result = ref as! NSDictionary
-    print("Returned attributes:")
-    result.forEach { key, value in
-        print("\(key): \(value)")
-    }
-}
-
-print("==============================================================")
-
-var format : UnsafeMutablePointer<SecExternalFormat>? = nil
-var itemType : UnsafeMutablePointer<SecExternalItemType>? = nil
-var outItems: CFArray? = nil
-var keyParams = SecItemImportExportKeyParameters()
-keyParams.version = UInt32(SEC_KEY_IMPORT_EXPORT_PARAMS_VERSION)
-//    keyParams.passphrase = "ExportImportPassphrase" as CFString
-let fileNameOrExtension = "test1.cer" as CFString
-let importKeychain : SecKeychain? = nil
-let importedData: CFData = FileManager().contents(atPath: "test1.cer")! as CFData
-let flags = SecItemImportExportFlags.pemArmour
-
 var test1Item :SecKeychainItem? = nil
 status = ImportCertificate(fileName: "test1.cer", certificate: &test1Item, importKeychain: nil)
 
